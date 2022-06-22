@@ -1,19 +1,6 @@
 #ifndef NOTES_H_INCLUDED
 #define NOTES_H_INCLUDED
 
-typedef enum Note
-{
-	C0 = 0, D0 = 1, E0 = 2, F0 = 3, G0 = 4, A0 = 5, B0 = 6,
-	C1 = 7, D1 = 8, E1 = 9, F1 = 10, G1 = 11, A1 = 12, B1 = 13,
-	C2 = 14, D2 = 15, E2 = 16, F2 = 17, G2 = 18, A2 = 19, B2 = 20,
-	C3 = 21, D3 = 22, E3 = 23, F3 = 24, G3 = 25, A3 = 26, B3 = 27,
-	C4 = 28, D4 = 29, E4 = 30, F4 = 31, G4 = 32, A4 = 33, B4 = 34,
-	C5 = 35, D5 = 36, E5 = 37, F5 = 38, G5 = 39, A5 = 40, B5 = 41,
-	C6 = 42, D6 = 43, E6 = 44, F6 = 45, G6 = 46, A6 = 47, B6 = 48,
-	C7 = 49, D7 = 50, E7 = 51, F7 = 52, G7 = 53, A7 = 54, B7 = 55,
-	C8 = 56, D8 = 57, E8 = 58, F8 = 59, G8 = 60, A8 = 61, B8 = 62
-} Note;
-
 #define A0_FREQ 27.5
 #define A1_FREQ 55.0
 #define A2_FREQ 110.0
@@ -83,5 +70,37 @@ typedef enum Note
 #define G6_FREQ 1567.98
 #define G7_FREQ 3135.96
 #define G8_FREQ 6271.93
+
+#define SILENCE_FREQ 0
+
+typedef enum NoteName
+{
+	C0 = 0, D0 = 1, E0 = 2, F0 = 3, G0 = 4, A0 = 5, B0 = 6,
+	C1 = 7, D1 = 8, E1 = 9, F1 = 10, G1 = 11, A1 = 12, B1 = 13,
+	C2 = 14, D2 = 15, E2 = 16, F2 = 17, G2 = 18, A2 = 19, B2 = 20,
+	C3 = 21, D3 = 22, E3 = 23, F3 = 24, G3 = 25, A3 = 26, B3 = 27,
+	C4 = 28, D4 = 29, E4 = 30, F4 = 31, G4 = 32, A4 = 33, B4 = 34,
+	C5 = 35, D5 = 36, E5 = 37, F5 = 38, G5 = 39, A5 = 40, B5 = 41,
+	C6 = 42, D6 = 43, E6 = 44, F6 = 45, G6 = 46, A6 = 47, B6 = 48,
+	C7 = 49, D7 = 50, E7 = 51, F7 = 52, G7 = 53, A7 = 54, B7 = 55,
+	C8 = 56, D8 = 57, E8 = 58, F8 = 59, G8 = 60, A8 = 61, B8 = 62,
+	SILENCE = 63
+} NoteName;
+
+typedef enum NoteDuration
+{
+	semibreve = 2000,
+	minim = 1000,
+	crotchet = 500,
+	quaver = 250,
+	custom = 0
+} NoteDuration;
+
+typedef struct Note
+{
+	NoteName name;
+	NoteDuration duration;
+	uint16_t custom_duration;
+} Note;
 
 #endif

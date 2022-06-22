@@ -29,11 +29,13 @@ void EXTI15_10_IRQHandler()
 	}
 }
 
-extern Note playing;
+extern uint8_t music_sheet_cursor;
+extern Note* music_sheet;
+extern uint8_t music_sheet_length;
 void TIM2_IRQHandler()
 {
 	TIM2->SR &= ~1;
-	playing++;
-	playing %= 11;
-	tone(playing);
+	music_sheet_cursor++;
+	music_sheet_cursor %= music_sheet_length;
+	tone(music_sheet[music_sheet_cursor]);
 }
