@@ -2,6 +2,7 @@
 #define PROTOTYPES_H_INCLUDED
 
 #include "notes.h"
+#include "buzzer.h"
 
 // Initialization
 void initButton();
@@ -15,6 +16,7 @@ void enableInterruptButton();
 void enableInterruptTIM2();
 
 // Buzzer
+Buzzer InitBuzzer();
 void toggleBuzzer();
 void tone(Note note);
 void setSheetMusic(Note music_sheet[], uint8_t music_sheet_length);

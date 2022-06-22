@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "stm32l1xx_nucleo.h"
+#include "../includes/prototypes.h"
 #include "../includes/notes.h"
+#include "../includes/buzzer.h"
 
 #define SILENCE_DURATION  50 // milliseconds
 
@@ -67,4 +69,16 @@ void setSheetMusic(Note user_music_sheet[], uint8_t user_music_sheet_length)
 	}
 	
 	music_sheet_cursor = 0;
+}
+
+Buzzer InitBuzzer()
+{
+	initTIM2();
+    initTIM3();
+    initPWM();
+    initBuzzer();
+	enableInterruptTIM2();
+	
+	Buzzer buzzer = {toggleBuzzer, setSheetMusic};
+	return buzzer;
 }
