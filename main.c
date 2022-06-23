@@ -1,6 +1,9 @@
 #include "stm32l1xx_nucleo.h"
 #include "main.h"
 
+Buzzer buzzer;
+LedStripe ledstripe;
+
 void main()
 {
 	initButton();
@@ -21,9 +24,13 @@ void main()
 		{C5, crotchet}, {G4, crotchet}, {C5, minim}, {C5, crotchet}, {G4, crotchet}, {C5, minim}
 	};
 	
-	Buzzer buzzer = InitBuzzer();
+	buzzer = InitBuzzer();
 	buzzer.setSheetMusic(pop_corn, 29);
 	buzzer.setSheetMusic(jacquot, 32);
+	
+	ledstripe = InitLedStripe();
+	ledstripe.setAnim(BLINK);
+	ledstripe.setLEDs(ON, 4, LED1, LED3, LED5, LED7);
 	
     while (1)
     {

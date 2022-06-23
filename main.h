@@ -3,6 +3,7 @@
 
 #include "includes/notes.h"
 #include "includes/buzzer.h"
+#include "includes/ledstripe.h"
 #include "includes/prototypes.h"
 
 #endif
