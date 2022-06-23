@@ -68,7 +68,7 @@ void setSheetMusic(Note user_music_sheet[], uint8_t user_music_sheet_length)
 		music_sheet[music_sheet_cursor+1] = silence;
 	}
 	
-	music_sheet_cursor = 0;
+	music_sheet_cursor = -1;
 }
 
 Buzzer InitBuzzer()
@@ -79,6 +79,6 @@ Buzzer InitBuzzer()
     initBuzzer();
 	enableInterruptTIM2();
 	
-	Buzzer buzzer = {toggleBuzzer, setSheetMusic};
+	Buzzer buzzer = {0, toggleBuzzer, setSheetMusic};
 	return buzzer;
 }

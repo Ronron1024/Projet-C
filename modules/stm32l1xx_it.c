@@ -37,11 +37,16 @@
    */
 #include "../main.h" 
     
+int checkNote(Note, Note);
+    
 extern  BTN button1;
 extern  BTN button2;
 extern  BTN button3;
 extern  BTN button4;
 
+extern DISPLAYLCD DisplayLcd;
+
+extern Buzzer buzzer;
 extern uint8_t music_sheet_cursor;
 extern Note* music_sheet;
 extern uint8_t music_sheet_length;
@@ -62,17 +67,10 @@ extern uint8_t LEDs_position[LED_NBR];
      EXTI->PR |= (1<<11);
      if( button1.status == 1){
           button1.status = 0;
-          button1.count += 1;
-          //clock_t current = clock();         
-          //calc = current - button1.start;
-         // button1.duration= (uint32_t) calc*10;  //en milliseconde, 
-
-          
+          button1.count += 1;        
      }
       else
         button1.status = 1;
-        //button1.start = clock(); //Chrono ON
-        
    }
    
   if (EXTI->PR & (1<<12))
@@ -93,26 +91,34 @@ extern uint8_t LEDs_position[LED_NBR];
    
    Delay(10000);        //evite "les micros rebonds"
    
-   if( EXTI->PR & (1<<6) ) {   
+   if( EXTI->PR & (1<<6) ) 
+   
+   {   
      EXTI->PR |= (1<<6);
      
-     if( button3.status == 1){
-      button3.status = 0;
-      button3.count += 1;   
-     }
-     else
-      button3.status = 1; 
+     button3.status = 1;
+     button3.count += 1;
+     //if( button4.status == 1){
+      //button4.status = 0;
+      //button4.count += 1;   
+     //}
+     //else
+      //button4.status = 1; 
    }
      
    if( EXTI->PR & (1<<5) ){   
      EXTI->PR |= (1<<5);
      
-     if( button4.status == 1){
-      button4.status = 0;
-      button4.count += 1;   
-     }
-     else
-      button4.status = 1; 
+     
+     
+     button4.status = 1;
+     button4.count += 1;
+     //if( button3.status == 1){
+     // button3.status = 0;
+     // button3.count += 1;   
+     //}
+    // else
+    //  button3.status = 1; 
      
    } 
  }
@@ -125,12 +131,32 @@ extern uint8_t LEDs_position[LED_NBR];
 	TIM2->DIER |= 1;
 }
 
+extern Note basic[3];
 void TIM2_IRQHandler()
 {
-	TIM2->SR &= ~1;
+	TIM2->SR &= ~1;      
 	music_sheet_cursor++;
-	music_sheet_cursor %= music_sheet_length;
-	tone(music_sheet[music_sheet_cursor]);
+        
+        
+        
+        eraseLCD(&DisplayLcd);
+       for (int j=0; j<3; j++){
+      
+          if (  checkNote(music_sheet[music_sheet_cursor], basic[j]) ){
+         
+              printDigit(&DisplayLcd,j+1, '0');
+          }
+        
+        }
+         
+        if (music_sheet_cursor == music_sheet_length)
+        {
+          toggleBuzzer();
+          buzzer.is_playing = 0;
+        }
+        else
+          tone(music_sheet[music_sheet_cursor]);
+        
 }
 
 

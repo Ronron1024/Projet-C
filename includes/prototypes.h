@@ -37,4 +37,7 @@ void setLED(uint8_t state, uint8_t led);
 void setLEDs(uint8_t state, uint8_t n, ...);
 void animNextFrame();
 
+// Demo
+void demo(uint8_t to_play);
+
 #endif

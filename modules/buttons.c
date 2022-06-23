@@ -55,7 +55,7 @@ void enable_interrupt_ext_buttons(void){
    //Bouton sur PC6
    EXTI->IMR |= (1<<6);
    EXTI->FTSR |= (1<<6);  //Front descendant
-   EXTI->RTSR |= (1<<6);   //Front montant
+   //EXTI->RTSR |= (1<<6);   //Front montant
    
    SYSCFG->EXTICR[1]&= ~(1<<8);         //Config PC
    SYSCFG->EXTICR[1]|=  (1<<9);
@@ -65,7 +65,7 @@ void enable_interrupt_ext_buttons(void){
    //Bouton sur PC5
    EXTI->IMR |= (1<<5);
    EXTI->FTSR |= (1<<5);  //Front descendant
-   EXTI->RTSR |= (1<<5);   //Front montant
+   //EXTI->RTSR |= (1<<5);   //Front montant
    
    SYSCFG->EXTICR[1]&= ~(1<<4);
    SYSCFG->EXTICR[1]|=  (1<<5);

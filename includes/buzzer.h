@@ -5,6 +5,7 @@
 
 typedef struct Buzzer
 {
+    int is_playing;
 	void (*toggleBuzzer)(void);
 	void (*setSheetMusic)(Note[], uint8_t);
 } Buzzer;
