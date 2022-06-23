@@ -68,15 +68,6 @@ void initLEDs(uint8_t n, ...)
     va_end(valist);
 }
 
-void initButton()
-{
-	RCC->AHBENR |= 1;
-	
-	GPIOA->MODER &= ~(1 << 22 | 1 << 23);
-	
-	GPIOA->PUPDR &= ~(1 << 22 | 1 << 23);
-}
-
 void initTIM2()
 {
 	RCC->APB1ENR |= 1;

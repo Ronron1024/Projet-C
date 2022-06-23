@@ -28,14 +28,27 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+/*
 #include "stm32l1xx_it.h"
-#include "structures.h"
-#include "displayLCD.h"  
-
+#include "../includes/structures.h"
+#include "../includes/displayLCD.h"  
+#include "../includes/notes.h"  
+#include "../includes/ledstripe.h"
+   */
+#include "../main.h" 
+    
 extern  BTN button1;
 extern  BTN button2;
 extern  BTN button3;
 extern  BTN button4;
+
+extern uint8_t music_sheet_cursor;
+extern Note* music_sheet;
+extern uint8_t music_sheet_length;
+
+extern LedStripe ledstripe;
+extern uint8_t LEDs_state[LED_NBR];
+extern uint8_t LEDs_position[LED_NBR];
  
  void EXTI15_10_IRQHandler(){ /*Table vecteur logiciel => 40*/
                               /*system_stm32l1xx.h */
@@ -105,7 +118,38 @@ extern  BTN button4;
  }
  
  
+ //buzzer
+ void enableInterruptTIM2()
+{
+	NVIC->ISER[0] |= 1 << 28;
+	TIM2->DIER |= 1;
+}
 
+void TIM2_IRQHandler()
+{
+	TIM2->SR &= ~1;
+	music_sheet_cursor++;
+	music_sheet_cursor %= music_sheet_length;
+	tone(music_sheet[music_sheet_cursor]);
+}
+
+
+
+//Led
+void enableInterruptTIM4()
+{
+	NVIC->ISER[0] |= 1 << 30;
+	TIM4->DIER |= 1;
+}
+
+void TIM4_IRQHandler()
+{
+	TIM4->SR &= ~1;
+	
+	for (uint8_t i = 0; i < LED_NBR; i++)
+		ledstripe.setLED(LEDs_state[i], LEDs_position[i]);
+	animNextFrame();
+}
 
 /** @addtogroup Template_Project
   * @{

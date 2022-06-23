@@ -1,5 +1,5 @@
 #include "stm32l1xx_nucleo.h"
-#include "buttons.h"
+#include "../includes/buttons.h"
   
 void initButton(BTN* btn, int num){
   

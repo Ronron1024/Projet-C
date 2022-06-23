@@ -1,6 +1,8 @@
 #ifndef NOTES_H_INCLUDED
 #define NOTES_H_INCLUDED
 
+#include "stm32l1xx_nucleo.h"
+
 #define A0_FREQ 27.5
 #define A1_FREQ 55.0
 #define A2_FREQ 110.0

@@ -3,19 +3,6 @@
 #include "../includes/ledstripe.h"
 #include "../includes/prototypes.h"
 
-void enableInterruptButton()
-{
-	RCC->APB2ENR |= 1;
-	
-	NVIC->ISER[1] |= 1 << 8;
-	
-	EXTI->IMR |= 1 << 11;
-	
-	EXTI->FTSR |= 1 << 11;
-	
-	SYSCFG->EXTICR[2] &= ~(1 << 12 | 1 << 13 | 1 << 14 | 1 << 15);
-}
-
 void enableInterruptTIM2()
 {
 	NVIC->ISER[0] |= 1 << 28;
@@ -30,6 +17,8 @@ void enableInterruptTIM4()
 
 extern Buzzer buzzer;
 extern LedStripe ledstripe;
+
+/*
 void EXTI15_10_IRQHandler()
 {
 	if (EXTI->PR & (1 << 11))
@@ -39,6 +28,7 @@ void EXTI15_10_IRQHandler()
 		//ledstripe.toggleAnim();
 	}
 }
+*/
 
 extern uint8_t music_sheet_cursor;
 extern Note* music_sheet;

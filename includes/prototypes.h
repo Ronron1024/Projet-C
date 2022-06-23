@@ -14,7 +14,6 @@ void setBitTo0(volatile void* reg, size_t reg_size, uint8_t n);
 void setBitsTo0(volatile void* reg, size_t reg_size, uint8_t n, ...);
 
 // Initialization
-void initButton();
 void initTIM2();
 void initTIM3();
 void initTIM4();
@@ -23,7 +22,6 @@ void initBuzzer();
 void initLEDs(uint8_t n, ...);
 
 // Interrupts
-void enableInterruptButton();
 void enableInterruptTIM2();
 void enableInterruptTIM4();
 
