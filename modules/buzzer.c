@@ -34,7 +34,7 @@ void toggleBuzzer()
 	{
 		TIM2->CR1 |= 1;
 		TIM3->CR1 |= 1;
-    	TIM3->CCER |= 1 << 4;
+		TIM3->CCER |= 1 << 4;
 	}
 }
 
@@ -74,9 +74,9 @@ void setSheetMusic(Note user_music_sheet[], uint8_t user_music_sheet_length)
 Buzzer InitBuzzer()
 {
 	initTIM2();
-    initTIM3();
-    initPWM();
-    initBuzzer();
+	initTIM3();
+	initPWM();
+	initBuzzer();
 	enableInterruptTIM2();
 	
 	Buzzer buzzer = {0, toggleBuzzer, setSheetMusic};
