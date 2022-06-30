@@ -179,7 +179,6 @@ void createDigit(uint8_t* current, int n, ...){
    va_end(valist);
 }
 
-
 void printfDigit(DISPLAYLCD* DisplayLcd,char* text, Speed speed){
   
   char* c;
@@ -188,6 +187,8 @@ void printfDigit(DISPLAYLCD* DisplayLcd,char* text, Speed speed){
   
   c = text;
   ptr = text;
+  
+  
   
   while(*c != '\0'){
         
@@ -202,8 +203,8 @@ void printfDigit(DISPLAYLCD* DisplayLcd,char* text, Speed speed){
       Delay(speed);
 
     }
-  
   }
+  
   
   DisplayDigit(DisplayLcd, i, EMPTY);
   

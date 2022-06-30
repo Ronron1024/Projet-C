@@ -38,7 +38,7 @@ void setLEDs(uint8_t state, uint8_t n, ...);
 void animNextFrame();
 
 // Game
-void demo(uint8_t to_play);
+void demo(uint8_t to_play, Note* music_sheet);
 int checkNote(Note user, Note expected);
 
 #endif

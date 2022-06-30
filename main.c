@@ -5,32 +5,58 @@ BTN button2;
 BTN button3;
 BTN button4;
 
+void init_ADC(void){
+	
+	//activation de l' horloge sur le periphérique ADC sur bus APB2
+	RCC->APB2ENR |= (1<<9);
+	
+	RCC->CR |= (1<<0);  //HSI clock enable ==> 16MHz ?
+	
+	ADC->CCR &= ~(1<<16); //prescaler set 0x00  => HSI divided by 1?  //Echantillonage // Temps de conversion 
+	ADC->CCR &= ~(1<<17);
+	
+	//ADC1->CR1 |= 1 << 24 | 1 << 25; // 6 bits resolution
+	ADC1->CR1 &= ~(1 << 24) & ~(1 << 25); // 12 bits resolution
+	
+	//Lien avec GPIO -> ADC
+	//RI->ASCR1 |= (1<<0); // Close switch to ADC: A0 =>  ADC1_IN0  //RV2
+	RI->ASCR1 |= (1<<1); // Close switch to ADC: A1 =>  ADC_IN1
+	
+	//ADC1->SQR1 &= ~(1 << 24 | 1 << 23 | 1 << 22 | 1 << 21 | 1 << 20); // Canal choice, 1 conversion (p. 301)
+	ADC1->SQR1 &= ~(1 << 24 | 1 << 23 | 1 << 22 | 1 << 21 | 1 << 20); // Canal choice, 1 conversion (p. 301)
+	
+	//ADC1->SQR5 &= ~(1 << 0 | 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4); //  A0 //RV2
+	ADC1->SQR5 |= (1<<0);
+	ADC1->SQR5 &= ~ ((1<<1)|(1<<2)|(1<<3)|(1<<4));  
+	
+	ADC1->CR2 |= 1 << 1; // Continuous conversion mode
+	
+}
+
+
 DISPLAYLCD DisplayLcd;
 
 Buzzer buzzer;
 extern uint8_t LEDs_position[LED_NBR];
 LedStripe ledstripe;
 
-Note pop_corn[29] = 
-{
-	{A5, quaver}, {G5, quaver}, {A5, quaver}, {E5, quaver}, {C5, quaver}, {E5, quaver}, {A4, crotchet},
-	{A5, quaver}, {G5, quaver}, {A5, quaver}, {E5, quaver}, {C5, quaver}, {E5, quaver}, {A4, crotchet},
-	{A5, quaver}, {B5, quaver}, {C6, quaver}, {B5, quaver}, {C6, quaver}, {A5, quaver}, {B5, quaver}, {A5, quaver}, {B5, quaver}, {G5, quaver}, {A5, quaver}, {G5, quaver}, {A5, quaver}, {F5, quaver}, {A5, crotchet}
-};
-
-Note jacquot[32] = 
-{
-	{C5, crotchet}, {D5, crotchet}, {E5, crotchet}, {C5, crotchet}, {C5, crotchet}, {D5, crotchet}, {E5, crotchet}, {C5, crotchet},
-	{E5, crotchet}, {F5, crotchet}, {G5, minim}, {E5, crotchet}, {F5, crotchet}, {G5, minim},
-	{G5, quaver}, {A5, quaver}, {G5, quaver}, {F5, quaver}, {E5, crotchet}, {C5, crotchet}, {G5, quaver}, {A5, quaver}, {G5, quaver}, {F5, quaver}, {E5, crotchet}, {C5, crotchet},
-	{C5, crotchet}, {G4, crotchet}, {C5, minim}, {C5, crotchet}, {G4, crotchet}, {C5, minim}
-};
+int choice = 0;
+extern Note pop_corn[29];
+extern int pop_corn_digit[29];
+extern Note jacquot[32];
+extern int jacquot_digit[32];
 extern Note moonlight[11];
-
+extern int moonlight_digit[11];
+int length = 29;
+Note* musicSheet = pop_corn;
+int* music_digit = pop_corn_digit;
+Note one_note[1];
+int cursor=0 ;
 
 int main(void)
 {
 	initLCD(&DisplayLcd);         //Init structure & config
+	//init_ADC();
 	initButtons(&button1, &button2, &button3, &button4); //Init structure
 	enable_interrupt_ext_buttons();                      //Init interruption ext button;
 	
@@ -39,7 +65,7 @@ int main(void)
 	
 	ledstripe = InitLedStripe();
 	ledstripe.setAnim(K2000);
-
+	
 	statusLCD(&DisplayLcd,ON);    //ON ou OFF LCD
 	IntensityLCD(&DisplayLcd,0);  //Between 0 to 15
 	
@@ -61,16 +87,49 @@ int main(void)
 	
 	/* Infinite loop */
 	
-	Note noteButton1[1] = { {G4, quaver} };
-	Note noteButton2[1] = { {A5, quaver} };
-	Note noteButton3[1] = { {B5, quaver} };
-	Note noteButton4[1] = { {D5, quaver} };
-	
-	int cursor=0 ;
 	uint8_t life = 4;
 	uint8_t note_to_play = 3;
 	int game = 1;
 	int has_demo = 0;
+	
+	//ADC enable On active le CAN
+	/*ADC1->CR2 |= (1<<0);
+	
+	while( (ADC1->SR & ADC_FLAG_ADONS) == 0 ); //Pas de début de conversion
+	
+	ADC1->CR2 |= (1<<30);       //Start conversion SWSTART
+	
+	while( (ADC1->SR & ADC_FLAG_EOC) == 0 ); //Fin de conversion
+	
+	while(!choice){
+		if(ADC1->DR < 1365 ){
+			
+			musicSheet = pop_corn ;
+			music_digit = pop_corn_digit;
+			length = 29;
+			
+			printfDigit(&DisplayLcd,"1- POP CORN ", NORMAL);
+		}
+		
+		if(ADC1->DR > 1365 && ADC1->DR < 2730)  {
+			
+			musicSheet = jacquot ;
+			music_digit = jacquot_digit;
+			length = 32;
+			printfDigit(&DisplayLcd,"2- JACQUOT ", NORMAL);
+		}
+		
+		if(ADC1->DR > 2730){
+			
+			musicSheet = moonlight ;
+			music_digit = moonlight_digit;
+			length = 11;
+			printfDigit(&DisplayLcd,"3- MOONLIGHT ", NORMAL);
+			
+		}
+	}*/
+	
+	demo(length, musicSheet);
 	
 	while (1)
 	{		
@@ -79,74 +138,70 @@ int main(void)
 			
 			if (!has_demo)
 			{
-				demo(note_to_play);
+				demo(note_to_play, musicSheet);
 				has_demo = 1;
 				continue; // Cannot play during demo
 			}
 			
 			if(button1.status == 1)
 			{
-				buzzer.setSheetMusic(noteButton1 ,1);
+				one_note[0] = musicSheet[cursor];
+				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
-				if ( checkNote(noteButton1[0],moonlight[cursor]) )
+				if ( music_digit[cursor] == 1 )
 				{        
-					printDigit(&DisplayLcd,4, '0');
 					cursor++;
 				}
 				else 
 				{          
-					printDigit(&DisplayLcd,4, '1');
 					life--;          
 				}
 			}
 			
 			if(button2.status == 1){
-				buzzer.setSheetMusic(noteButton2 ,1);
+				one_note[0] = musicSheet[cursor];
+				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
-				if ( checkNote(noteButton2[0],moonlight[cursor]) )
+				if ( music_digit[cursor] == 2 )
 				{
-					printDigit(&DisplayLcd,4, '0');
 					cursor++;       
 				}
 				else 
 				{
-					printDigit(&DisplayLcd,4, '1');
 					life--;
 				}
 			}
 			
 			if(button3.status == 1)
 			{
-				buzzer.setSheetMusic(noteButton3 ,1);
+				one_note[0] = musicSheet[cursor];
+				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
-				if ( checkNote(noteButton3[0],moonlight[cursor]) )
+				if ( music_digit[cursor] == 3 )
 				{
-					printDigit(&DisplayLcd,4, '0');
 					cursor++;       
 				}
 				else 
 				{
-					printDigit(&DisplayLcd,4, '1');
 					//life--;
 				}
 				button3.status = 0;
 			}
 			
 			if(button4.status == 1){
-				buzzer.setSheetMusic(noteButton4 ,1);
+				one_note[0] = musicSheet[cursor];
+				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
-				if ( checkNote(noteButton4[0],moonlight[cursor]) )
+				if ( music_digit[cursor] == 4 )
 				{
-					printDigit(&DisplayLcd,4, '0');
 					cursor++;       
 				}
 				else 
 				{
-					printDigit(&DisplayLcd,4, '1');
 					life--;
 				}
 				button4.status = 0;
@@ -167,7 +222,7 @@ int main(void)
 				break; // End game, lose
 			}
 			
-			if (cursor == 11)
+			if (cursor == length)
 			{
 				game = 0;
 				break; // End game, win
