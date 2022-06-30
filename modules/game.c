@@ -28,7 +28,7 @@ int pop_corn_digit[29] =
 	4, 3, 4, 2, 1, 2, 1, 4, 3, 4, 2, 1, 2, 1, 1, 2, 4, 3, 4, 2, 4, 3, 4, 1, 4, 3, 4, 2, 4
 };
 
-/*Note jacquot[32] = 
+Note jacquot[32] = 
 {
 	{C5, crotchet}, {D5, crotchet}, {E5, crotchet}, {C5, crotchet}, {C5, crotchet}, {D5, crotchet}, {E5, crotchet}, {C5, crotchet},
 	{E5, crotchet}, {F5, crotchet}, {G5, minim}, {E5, crotchet}, {F5, crotchet}, {G5, minim},
@@ -38,7 +38,7 @@ int pop_corn_digit[29] =
 int jacquot_digit[32] = 
 {
 	1, 2, 3, 1, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 3, 4, 3, 2, 1, 1, 3, 4, 3, 2, 1, 1, 3, 1, 2, 3, 1, 2
-};*/
+};
 
 
 //function verification

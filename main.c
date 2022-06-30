@@ -39,39 +39,39 @@ int testButton3(void);
 int testButton4(void);
 
 int testButton1(){
-
-  if(button1.status == 1  && Delay(300000) == 0 )
-    return 1;
-  else
-    return 0;
-
+	
+	if(button1.status == 1  && Delay(300000) == 0 )
+		return 1;
+	else
+		return 0;
+	
 }
 
 int testButton2(){
-
-  if(button2.status == 1  && Delay(300000) == 0)
-    return 1;
-  else
-    return 0;
-
+	
+	if(button2.status == 1  && Delay(300000) == 0)
+		return 1;
+	else
+		return 0;
+	
 }
 
 int testButton3(){
-
-  if(button3.status == 1  && Delay(300000) == 0 && button4.status == 0)
-    return 1;
-  else
-    return 0;
-
+	
+	if(button3.status == 1  && Delay(300000) == 0 && button4.status == 0)
+		return 1;
+	else
+		return 0;
+	
 }
 
 int testButton4(){
-
-  if(button4.status == 1  && Delay(300000) == 0 && button3.status == 0)
-    return 1;
-  else
-    return 0;
-
+	
+	if(button4.status == 1  && Delay(300000) == 0 && button3.status == 0)
+		return 1;
+	else
+		return 0;
+	
 }
 
 
@@ -86,8 +86,8 @@ extern Note demo_song[6];
 extern int demo_song_digit[6];
 extern Note pop_corn[29];
 extern int pop_corn_digit[29];
-/*extern Note jacquot[32];
-extern int jacquot_digit[32];*/
+extern Note jacquot[32];
+extern int jacquot_digit[32];
 int length = 0;
 Note* musicSheet = 0;
 int* music_digit = 0;
@@ -144,11 +144,10 @@ int main(void)
 	while( (ADC1->SR & ADC_FLAG_EOC) == 0 ); //Fin de conversion
 	
 	while(!choice){
-          
-          
-		if(ADC1->DR < 2048)  {
-//			
-                        musicSheet = pop_corn ;
+		
+		
+		if(ADC1->DR >= 1365 && ADC1->DR < 2730)  {
+			musicSheet = pop_corn ;
 			music_digit = pop_corn_digit;
 			length = 29;
 			
@@ -156,34 +155,43 @@ int main(void)
 			printDigit(&DisplayLcd, 2, 'O');
 			printDigit(&DisplayLcd, 3, 'R');
 			printDigit(&DisplayLcd, 4, 'N');
-                  
+			
 		}
-
-		if(ADC1->DR >= 2048){
-                  
-                        musicSheet = demo_song ;
+		
+		if(ADC1->DR < 1365){
+			
+			musicSheet = demo_song ;
 			music_digit = demo_song_digit;
 			length = 6;
-//			
+
 			printDigit(&DisplayLcd, 1, 'D');
 			printDigit(&DisplayLcd, 2, 'E');
 			printDigit(&DisplayLcd, 3, 'M');
 			printDigit(&DisplayLcd, 4, 'O');
-                  
-
-                  		
+		}
+		
+		if (ADC1->DR >= 2730)
+		{
+			musicSheet = jacquot;
+			music_digit = jacquot_digit;
+			length = 32;
+			
+			printDigit(&DisplayLcd, 1, 'J');
+			printDigit(&DisplayLcd, 2, 'A');
+			printDigit(&DisplayLcd, 3, 'C');
+			printDigit(&DisplayLcd, 4, 'Q');
 		}
 	}
 	
 	eraseLCD(&DisplayLcd);
 	Delay(100000);
-        
-       printDigit(&DisplayLcd, 1, 'D');
-       printDigit(&DisplayLcd, 2, 'E');
-       printDigit(&DisplayLcd, 3, 'M');
-       printDigit(&DisplayLcd, 4, 'O');
-			
-
+	
+	printDigit(&DisplayLcd, 1, 'D');
+	printDigit(&DisplayLcd, 2, 'E');
+	printDigit(&DisplayLcd, 3, 'M');
+	printDigit(&DisplayLcd, 4, 'O');
+	
+	
 	demo(length, musicSheet);
 	
 	while (1)
@@ -191,27 +199,27 @@ int main(void)
 		while(game && !buzzer.is_playing)
 		{
 			
-
-                  
-                  
+			
+			
+			
 			if (!has_demo)
 			{
-
-                        printDigit(&DisplayLcd, 1, 'G');
-			printDigit(&DisplayLcd, 2, 'O');
-                        printDigit(&DisplayLcd, 3, '!');
-                        Delay(2000000);
-                        eraseLCD(&DisplayLcd);
-                        Delay(100000);
-
-
+				
+				printDigit(&DisplayLcd, 1, 'G');
+				printDigit(&DisplayLcd, 2, 'O');
+				printDigit(&DisplayLcd, 3, '!');
+				Delay(2000000);
+				eraseLCD(&DisplayLcd);
+				Delay(100000);
+				
+				
 				demo(note_to_play, musicSheet);
 				has_demo = 1;
 				continue; // Cannot play during demo
 			}
 			
 			//if(button1.status == 1 )
-                        if( testButton1() == 1 && testButton2() == 0 && testButton3() == 0 && testButton4() == 0)
+			if( testButton1() == 1 && testButton2() == 0 && testButton3() == 0 && testButton4() == 0)
 			{
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
@@ -228,9 +236,9 @@ int main(void)
 			}
 			
 			//if(button2.status == 1){
-                        if( testButton1() == 0 && testButton2() == 1 && testButton3() == 0 && testButton4() == 0)
-                        {
-                          
+			if( testButton1() == 0 && testButton2() == 1 && testButton3() == 0 && testButton4() == 0)
+			{
+				
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
@@ -246,10 +254,10 @@ int main(void)
 			}
 			
 			//if(button3.status == 1  && Delay(300000) == 0)
-                        if( testButton1() == 0 && testButton2() == 0 && testButton3() == 1 && testButton4() == 0 )
+			if( testButton1() == 0 && testButton2() == 0 && testButton3() == 1 && testButton4() == 0 )
 			{
-                 
-                           button3.status = 0;
+				
+				button3.status = 0;
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
@@ -262,13 +270,13 @@ int main(void)
 				{
 					life--;
 				}
-                                button3.status = 0;
+				button3.status = 0;
 			}
 			
 			//if(button4.status == 1  && Delay(300000) == 0){
-                        if( testButton1() == 0 && testButton2() == 0 && testButton3() == 0 && testButton4() == 1)
-                        {
-                                button4.status = 0;
+			if( testButton1() == 0 && testButton2() == 0 && testButton3() == 0 && testButton4() == 1)
+			{
+				button4.status = 0;
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();

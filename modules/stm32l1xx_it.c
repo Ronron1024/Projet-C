@@ -152,9 +152,9 @@ void TIM2_IRQHandler()
   else
   {
     if (music_sheet_length != 2)
-      printDigit(&DisplayLcd, music_digit[music_sheet_cursor / 2], '0');
+      SPI_write(music_digit[music_sheet_cursor / 2], 0b01111110);
     else
-      printDigit(&DisplayLcd, music_digit[cursor - 1], '0');
+      SPI_write(music_digit[cursor - 1], 0b01111110);
   }
   
   if (music_sheet_cursor == music_sheet_length)
