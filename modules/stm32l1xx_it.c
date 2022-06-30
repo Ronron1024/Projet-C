@@ -55,109 +55,118 @@ extern LedStripe ledstripe;
 extern uint8_t LEDs_state[LED_NBR];
 extern uint8_t LEDs_position[LED_NBR];
 extern int choice;
+
+
 void EXTI15_10_IRQHandler(){ /*Table vecteur logiciel => 40*/
-	/*system_stm32l1xx.h */
-	//double calc;
-	
-	
-	Delay(10000);        //evite "les micros rebonds"
-	
-	if (EXTI->PR & (1<<11)) //Lorqu' il y a interruption 
-	{
-		choice = 1;
-		EXTI->PR |= (1<<11);
-		if( button1.status == 1){
-			button1.status = 0;
-			button1.count += 1;        
-		}
-		else
-			button1.status = 1;
-	}
-	
-	if (EXTI->PR & (1<<12))
-	{
-		EXTI->PR |= (1<<12);
-		
-		if( button2.status == 1){
-			button2.status = 0;
-			button2.count += 1;   
-		}
-		else
-			button2.status = 1;
-	}  
+  
+  
+  /*system_stm32l1xx.h */
+  //double calc;
+  
+  
+  //Delay(10000);        //evite "les micros rebonds"
+  
+  if (EXTI->PR & (1<<11)) //Lorqu' il y a interruption 
+  {
+    choice = 1;
+    EXTI->PR |= (1<<11);
+    if( button1.status == 1){
+      button1.status = 0;
+      button1.count += 1;        
+    }
+    else
+      button1.status = 1;
+  }
+  
+  if (EXTI->PR & (1<<12))
+  {
+    EXTI->PR |= (1<<12);
+    
+    if( button2.status == 1){
+      button2.status = 0;
+      button2.count += 1;   
+    }
+    else
+      button2.status = 1;
+  }  
 }
 
-
 void EXTI9_5_IRQHandler (){  /*Table vecteur logiciel => 23*/
-	
-	Delay(10000);        //evite "les micros rebonds"
-	
-	if( EXTI->PR & (1<<6) ) 
-		
-	{   
-		EXTI->PR |= (1<<6);
-		
-		button3.status = 1;
-		button3.count += 1;
-		//if( button4.status == 1){
-		//button4.status = 0;
-		//button4.count += 1;   
-		//}
-		//else
-		//button4.status = 1; 
-	}
-	
-	if( EXTI->PR & (1<<5) ){   
-		EXTI->PR |= (1<<5);
-		
-		
-		
-		button4.status = 1;
-		button4.count += 1;
-		//if( button3.status == 1){
-		// button3.status = 0;
-		// button3.count += 1;   
-		//}
-		// else
-		//  button3.status = 1; 
-		
-	} 
+
+ 
+  if( EXTI->PR & (1<<6) ) 
+    
+  {  
+    
+    Delay(10000);        //evite "les micros rebonds"
+    EXTI->PR |= (1<<6);
+        
+    button3.status = 1;
+    button3.count += 1;
+    //if( button4.status == 1){
+    //button4.status = 0;
+    //button4.count += 1;   
+    //}
+    //else
+    //button4.status = 1;
+
+  }
+  
+  if( EXTI->PR & (1<<5) ){  
+    
+
+    
+    Delay(10000);        //evite "les micros rebonds"
+    EXTI->PR |= (1<<5);
+   
+    button4.status = 1;
+    button4.count += 1;
+
+    //if( button3.status == 1){
+    // button3.status = 0;
+    // button3.count += 1;   
+    //}
+    // else
+    //  button3.status = 1; 
+    
+  } 
 }
 
 
 //buzzer
 void enableInterruptTIM2()
 {
-	NVIC->ISER[0] |= 1 << 28;
-	TIM2->DIER |= 1;
+  NVIC->ISER[0] |= 1 << 28;
+  TIM2->DIER |= 1;
 }
 
 extern int* music_digit;
 extern int cursor;
 void TIM2_IRQHandler()
 {
-	TIM2->SR &= ~1;      
-	music_sheet_cursor++;
-
-	if (music_sheet[music_sheet_cursor].name == SILENCE && music_sheet_length != 2)
-		eraseLCD(&DisplayLcd);
-	else
-	{
-		if (music_sheet_length != 2)
-			printDigit(&DisplayLcd, music_digit[music_sheet_cursor / 2], '0');
-		else
-			printDigit(&DisplayLcd, music_digit[cursor - 1], '0');
-	}
-	
-	if (music_sheet_cursor == music_sheet_length)
-	{
-		toggleBuzzer();
-		eraseLCD(&DisplayLcd);
-		buzzer.is_playing = 0;
-	}
-	else
-		tone(music_sheet[music_sheet_cursor]);
-	
+  TIM2->SR &= ~1;      
+  music_sheet_cursor++;
+  
+  if (music_sheet[music_sheet_cursor].name == SILENCE && music_sheet_length != 2)
+    eraseLCD(&DisplayLcd);
+  else
+  {
+    if (music_sheet_length != 2)
+      printDigit(&DisplayLcd, music_digit[music_sheet_cursor / 2], '0');
+    else
+      printDigit(&DisplayLcd, music_digit[cursor - 1], '0');
+  }
+  
+  if (music_sheet_cursor == music_sheet_length)
+  {
+    toggleBuzzer();
+    eraseLCD(&DisplayLcd);
+    music_sheet_cursor = 0;
+    buzzer.is_playing = 0;
+  }
+  else
+    tone(music_sheet[music_sheet_cursor]);
+  
 }
 
 
@@ -165,17 +174,17 @@ void TIM2_IRQHandler()
 //Led
 void enableInterruptTIM4()
 {
-	NVIC->ISER[0] |= 1 << 30;
-	TIM4->DIER |= 1;
+  NVIC->ISER[0] |= 1 << 30;
+  TIM4->DIER |= 1;
 }
 
 void TIM4_IRQHandler()
 {
-	TIM4->SR &= ~1;
-	
-	for (uint8_t i = 0; i < LED_NBR; i++)
-		ledstripe.setLED(LEDs_state[i], LEDs_position[i]);
-	animNextFrame();
+  TIM4->SR &= ~1;
+  
+  for (uint8_t i = 0; i < LED_NBR; i++)
+    ledstripe.setLED(LEDs_state[i], LEDs_position[i]);
+  animNextFrame();
 }
 
 /** @addtogroup Template_Project
@@ -209,11 +218,11 @@ void NMI_Handler(void)
 */
 void HardFault_Handler(void)
 {
-	/* Go to infinite loop when Hard Fault exception occurs */
-	while (1)
-	{
-		
-	}
+  /* Go to infinite loop when Hard Fault exception occurs */
+  while (1)
+  {
+    
+  }
 }
 
 /**
@@ -223,10 +232,10 @@ void HardFault_Handler(void)
 */
 void MemManage_Handler(void)
 {
-	/* Go to infinite loop when Memory Manage exception occurs */
-	while (1)
-	{
-	}
+  /* Go to infinite loop when Memory Manage exception occurs */
+  while (1)
+  {
+  }
 }
 
 /**
@@ -236,10 +245,10 @@ void MemManage_Handler(void)
 */
 void BusFault_Handler(void)
 {
-	/* Go to infinite loop when Bus Fault exception occurs */
-	while (1)
-	{
-	}
+  /* Go to infinite loop when Bus Fault exception occurs */
+  while (1)
+  {
+  }
 }
 
 /**
@@ -249,10 +258,10 @@ void BusFault_Handler(void)
 */
 void UsageFault_Handler(void)
 {
-	/* Go to infinite loop when Usage Fault exception occurs */
-	while (1)
-	{
-	}
+  /* Go to infinite loop when Usage Fault exception occurs */
+  while (1)
+  {
+  }
 }
 
 /**

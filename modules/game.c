@@ -8,23 +8,13 @@
 
 extern DISPLAYLCD DisplayLcd;
 
-Note moonlight[11] =
-{ 
-	{G4, crotchet},
-	{G4, crotchet}, 
-	{G4, crotchet},
-	{A5, crotchet},
-	{B5, minim},
-	{A5, minim},
-	{G4, crotchet},
-	{B5, crotchet},
-	{A5, crotchet},
-	{A5, crotchet},
-	{G4, semibreve}
-};
-int moonlight_digit[11] = 
+Note demo_song[6] =
 {
-	1, 1, 1, 2, 3, 2, 1, 3, 2, 2, 1
+  {C4, quaver}, {E4, quaver}, {G4, quaver}, {E4, quaver}, {G4, quaver}, {C4, quaver}
+};
+int demo_song_digit[6] =
+{
+  1, 2, 4, 3, 4, 1
 };
 
 Note pop_corn[29] = 
@@ -38,7 +28,7 @@ int pop_corn_digit[29] =
 	4, 3, 4, 2, 1, 2, 1, 4, 3, 4, 2, 1, 2, 1, 1, 2, 4, 3, 4, 2, 4, 3, 4, 1, 4, 3, 4, 2, 4
 };
 
-Note jacquot[32] = 
+/*Note jacquot[32] = 
 {
 	{C5, crotchet}, {D5, crotchet}, {E5, crotchet}, {C5, crotchet}, {C5, crotchet}, {D5, crotchet}, {E5, crotchet}, {C5, crotchet},
 	{E5, crotchet}, {F5, crotchet}, {G5, minim}, {E5, crotchet}, {F5, crotchet}, {G5, minim},
@@ -48,7 +38,7 @@ Note jacquot[32] =
 int jacquot_digit[32] = 
 {
 	1, 2, 3, 1, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 3, 4, 3, 2, 1, 1, 3, 4, 3, 2, 1, 1, 3, 1, 2, 3, 1, 2
-};
+};*/
 
 
 //function verification

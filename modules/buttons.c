@@ -1,11 +1,11 @@
 #include "stm32l1xx_nucleo.h"
 #include "../includes/buttons.h"
-  
+#include "../includes/define.h"
+ 
 void initButton(BTN* btn, int num){
   
   btn->id = num;
   btn->status = 0;
-  //btn->duration = 0;
   btn->count = 0; 
    
 } 
@@ -73,3 +73,4 @@ void enable_interrupt_ext_buttons(void){
    SYSCFG->EXTICR[1]&= ~(1<<7);
 
 }
+

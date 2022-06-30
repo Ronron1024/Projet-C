@@ -94,9 +94,10 @@ SendData_SPI(data);
 while ((SPI1->SR & SPI_SR_BSY) == SPI_SR_BSY);
 Set_CS();
 }
-void Delay(uint32_t Tempo)
+int Delay(uint32_t Tempo)
 {
 while(Tempo--);
+return 0;
 }
 
 void initLCD(DISPLAYLCD* DisplayLcd){
@@ -187,8 +188,6 @@ void printfDigit(DISPLAYLCD* DisplayLcd,char* text, Speed speed){
   
   c = text;
   ptr = text;
-  
-  
   
   while(*c != '\0'){
         

@@ -33,6 +33,47 @@ void init_ADC(void){
 	
 }
 
+int testButton1(void);
+int testButton2(void);
+int testButton3(void);
+int testButton4(void);
+
+int testButton1(){
+
+  if(button1.status == 1  && Delay(300000) == 0 )
+    return 1;
+  else
+    return 0;
+
+}
+
+int testButton2(){
+
+  if(button2.status == 1  && Delay(300000) == 0)
+    return 1;
+  else
+    return 0;
+
+}
+
+int testButton3(){
+
+  if(button3.status == 1  && Delay(300000) == 0 && button4.status == 0)
+    return 1;
+  else
+    return 0;
+
+}
+
+int testButton4(){
+
+  if(button4.status == 1  && Delay(300000) == 0 && button3.status == 0)
+    return 1;
+  else
+    return 0;
+
+}
+
 
 DISPLAYLCD DisplayLcd;
 
@@ -41,22 +82,22 @@ extern uint8_t LEDs_position[LED_NBR];
 LedStripe ledstripe;
 
 int choice = 0;
+extern Note demo_song[6];
+extern int demo_song_digit[6];
 extern Note pop_corn[29];
 extern int pop_corn_digit[29];
-extern Note jacquot[32];
-extern int jacquot_digit[32];
-extern Note moonlight[11];
-extern int moonlight_digit[11];
-int length = 29;
-Note* musicSheet = pop_corn;
-int* music_digit = pop_corn_digit;
+/*extern Note jacquot[32];
+extern int jacquot_digit[32];*/
+int length = 0;
+Note* musicSheet = 0;
+int* music_digit = 0;
 Note one_note[1];
 int cursor=0 ;
 
 int main(void)
 {
 	initLCD(&DisplayLcd);         //Init structure & config
-	//init_ADC();
+	init_ADC();
 	initButtons(&button1, &button2, &button3, &button4); //Init structure
 	enable_interrupt_ext_buttons();                      //Init interruption ext button;
 	
@@ -64,7 +105,7 @@ int main(void)
 	//buzzer.setSheetMusic(pop_corn, 32);
 	
 	ledstripe = InitLedStripe();
-	ledstripe.setAnim(K2000);
+	//ledstripe.setAnim(K2000);
 	
 	statusLCD(&DisplayLcd,ON);    //ON ou OFF LCD
 	IntensityLCD(&DisplayLcd,0);  //Between 0 to 15
@@ -92,8 +133,9 @@ int main(void)
 	int game = 1;
 	int has_demo = 0;
 	
+	
 	//ADC enable On active le CAN
-	/*ADC1->CR2 |= (1<<0);
+	ADC1->CR2 |= (1<<0);
 	
 	while( (ADC1->SR & ADC_FLAG_ADONS) == 0 ); //Pas de début de conversion
 	
@@ -102,33 +144,46 @@ int main(void)
 	while( (ADC1->SR & ADC_FLAG_EOC) == 0 ); //Fin de conversion
 	
 	while(!choice){
-		if(ADC1->DR < 1365 ){
-			
-			musicSheet = pop_corn ;
+          
+          
+		if(ADC1->DR < 2048)  {
+//			
+                        musicSheet = pop_corn ;
 			music_digit = pop_corn_digit;
 			length = 29;
 			
-			printfDigit(&DisplayLcd,"1- POP CORN ", NORMAL);
+			printDigit(&DisplayLcd, 1, 'C');
+			printDigit(&DisplayLcd, 2, 'O');
+			printDigit(&DisplayLcd, 3, 'R');
+			printDigit(&DisplayLcd, 4, 'N');
+                  
 		}
-		
-		if(ADC1->DR > 1365 && ADC1->DR < 2730)  {
-			
-			musicSheet = jacquot ;
-			music_digit = jacquot_digit;
-			length = 32;
-			printfDigit(&DisplayLcd,"2- JACQUOT ", NORMAL);
+
+		if(ADC1->DR >= 2048){
+                  
+                        musicSheet = demo_song ;
+			music_digit = demo_song_digit;
+			length = 6;
+//			
+			printDigit(&DisplayLcd, 1, 'D');
+			printDigit(&DisplayLcd, 2, 'E');
+			printDigit(&DisplayLcd, 3, 'M');
+			printDigit(&DisplayLcd, 4, 'O');
+                  
+
+                  		
 		}
-		
-		if(ADC1->DR > 2730){
-			
-			musicSheet = moonlight ;
-			music_digit = moonlight_digit;
-			length = 11;
-			printfDigit(&DisplayLcd,"3- MOONLIGHT ", NORMAL);
-			
-		}
-	}*/
+	}
 	
+	eraseLCD(&DisplayLcd);
+	Delay(100000);
+        
+       printDigit(&DisplayLcd, 1, 'D');
+       printDigit(&DisplayLcd, 2, 'E');
+       printDigit(&DisplayLcd, 3, 'M');
+       printDigit(&DisplayLcd, 4, 'O');
+			
+
 	demo(length, musicSheet);
 	
 	while (1)
@@ -136,14 +191,27 @@ int main(void)
 		while(game && !buzzer.is_playing)
 		{
 			
+
+                  
+                  
 			if (!has_demo)
 			{
+
+                        printDigit(&DisplayLcd, 1, 'G');
+			printDigit(&DisplayLcd, 2, 'O');
+                        printDigit(&DisplayLcd, 3, '!');
+                        Delay(2000000);
+                        eraseLCD(&DisplayLcd);
+                        Delay(100000);
+
+
 				demo(note_to_play, musicSheet);
 				has_demo = 1;
 				continue; // Cannot play during demo
 			}
 			
-			if(button1.status == 1)
+			//if(button1.status == 1 )
+                        if( testButton1() == 1 && testButton2() == 0 && testButton3() == 0 && testButton4() == 0)
 			{
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
@@ -159,7 +227,10 @@ int main(void)
 				}
 			}
 			
-			if(button2.status == 1){
+			//if(button2.status == 1){
+                        if( testButton1() == 0 && testButton2() == 1 && testButton3() == 0 && testButton4() == 0)
+                        {
+                          
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
@@ -174,8 +245,11 @@ int main(void)
 				}
 			}
 			
-			if(button3.status == 1)
+			//if(button3.status == 1  && Delay(300000) == 0)
+                        if( testButton1() == 0 && testButton2() == 0 && testButton3() == 1 && testButton4() == 0 )
 			{
+                 
+                           button3.status = 0;
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
@@ -186,12 +260,15 @@ int main(void)
 				}
 				else 
 				{
-					//life--;
+					life--;
 				}
-				button3.status = 0;
+                                button3.status = 0;
 			}
 			
-			if(button4.status == 1){
+			//if(button4.status == 1  && Delay(300000) == 0){
+                        if( testButton1() == 0 && testButton2() == 0 && testButton3() == 0 && testButton4() == 1)
+                        {
+                                button4.status = 0;
 				one_note[0] = musicSheet[cursor];
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
@@ -204,7 +281,7 @@ int main(void)
 				{
 					life--;
 				}
-				button4.status = 0;
+				
 			}
 			
 			// Display health bar
@@ -241,12 +318,12 @@ int main(void)
 		{
 			if (!life)
 			{
-				printfDigit(&DisplayLcd,"YOU LOSE !", NORMAL);
+				printfDigit(&DisplayLcd,"LOSE", NORMAL);
 				blinkingLCD(&DisplayLcd, FAST);
 			}
 			else
 			{
-				printfDigit(&DisplayLcd,"YOU WIN !", NORMAL);
+				printfDigit(&DisplayLcd,"WIN", NORMAL);
 				blinkingLCD(&DisplayLcd, FAST);
 			}
 		}

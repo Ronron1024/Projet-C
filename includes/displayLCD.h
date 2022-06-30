@@ -9,7 +9,7 @@ void Reset_CS();
 void SPI_Config(void);
 void SendData_SPI(uint8_t data);
 void SPI_write(uint8_t add, uint8_t data);
-void Delay(uint32_t);
+int Delay(uint32_t);
 
 //mode ON/OFF pour le lcd
 void statusLCD(DISPLAYLCD* DisplayLcd, Mode mode);
