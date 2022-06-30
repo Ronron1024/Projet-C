@@ -8,6 +8,11 @@
 
 extern DISPLAYLCD DisplayLcd;
 
+extern  BTN button1;
+extern  BTN button2;
+extern  BTN button3;
+extern  BTN button4;
+
 Note moonlight[11] =
 { 
     {G4, crotchet},
@@ -50,3 +55,128 @@ void demo(uint8_t to_play)
   buzzer.is_playing = 1;
  
 }
+
+
+
+
+
+void  checkParttion(uint8_t* life, int numberNote )  {
+  
+  Note noteButton1[1] = { {G4, quaver} };
+  Note noteButton2[1] = { {A5, quaver} };
+  Note noteButton3[1] = { {B5, quaver} };
+  Note noteButton4[1] = { {D5, quaver} };
+
+int cursor=0 ;
+
+while(cursor != numberNote){
+
+
+      if(button1.status == 1){
+        
+        buzzer.setSheetMusic(noteButton1 ,1);
+        buzzer.toggleBuzzer();
+        buzzer.is_playing = 1;
+        if ( checkNote(noteButton1[0],moonlight[cursor]) ){
+        
+        printDigit(&DisplayLcd,4, '0');
+        cursor++;
+        
+        
+        }
+        
+        else {
+          
+          printDigit(&DisplayLcd,4, '1');
+          *life--;
+          
+        }
+        
+      }
+      
+      if(button2.status == 1){
+      
+           buzzer.setSheetMusic(noteButton2 ,1);
+           buzzer.toggleBuzzer();
+           buzzer.is_playing = 1;
+           if ( checkNote(noteButton2[0],moonlight[cursor]) ){
+           
+              printDigit(&DisplayLcd,4, '0');
+              cursor++;  
+           }
+            
+           else {
+              
+             printDigit(&DisplayLcd,4, '1');
+             *life--;
+              
+           }
+        
+       
+      
+      }
+      
+      if(button3.status == 1){
+
+           buzzer.setSheetMusic(noteButton3 ,1);
+           buzzer.toggleBuzzer();
+           buzzer.is_playing = 1;
+           if ( checkNote(noteButton3[0],moonlight[cursor]) ){
+           
+              printDigit(&DisplayLcd,4, '0');
+              cursor++;  
+           }
+            
+           else {
+              
+             printDigit(&DisplayLcd,4, '1');
+             *life--;
+              
+           }
+       
+      
+      
+       button3.status = 0;
+       
+      
+      }
+      
+      if(button4.status == 1){
+      
+           buzzer.setSheetMusic(noteButton4 ,1);
+           buzzer.toggleBuzzer();
+           buzzer.is_playing = 1;
+           if ( checkNote(noteButton4[0],moonlight[cursor]) ){
+           
+              printDigit(&DisplayLcd,4, '0');
+              cursor++;   
+           }
+            
+           else {
+              
+             printDigit(&DisplayLcd,4, '1');
+             *life--;
+              
+           }
+           
+           
+       button4.status = 0;
+       
+      
+      }
+
+
+}
+
+buzzer.is_playing = 0;
+
+
+}
+
+
+
+
+
+
+
+

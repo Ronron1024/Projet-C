@@ -37,8 +37,9 @@ void setLED(uint8_t state, uint8_t led);
 void setLEDs(uint8_t state, uint8_t n, ...);
 void animNextFrame();
 
-// Game
+// Demo
 void demo(uint8_t to_play);
-int checkNote(Note user, Note expected);
+
+void  checkParttion(uint8_t* life, int numberNote );
 
 #endif

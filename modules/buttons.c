@@ -49,6 +49,11 @@ void enable_interrupt_ext_buttons(void){
    SYSCFG->EXTICR[3]&= ~(1<<3);
    
    
+   
+   
+   
+   
+   
   //En fonction du type de l' interruption
    NVIC->ISER[0] |= (1<<23);    /* EXTI9_5_IRQn: 23 table des vecteurs*/
    

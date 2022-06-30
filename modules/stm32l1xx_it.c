@@ -54,7 +54,20 @@ extern uint8_t music_sheet_length;
 extern LedStripe ledstripe;
 extern uint8_t LEDs_state[LED_NBR];
 extern uint8_t LEDs_position[LED_NBR];
- 
+
+Note* musicSheet = 0 ;
+
+extern Note pop_corn[29];
+extern Note jacquot[32];
+extern Note moonlight[11];
+
+
+
+
+
+
+
+
  void EXTI15_10_IRQHandler(){ /*Table vecteur logiciel => 40*/
                               /*system_stm32l1xx.h */
    //double calc;
@@ -89,7 +102,7 @@ extern uint8_t LEDs_position[LED_NBR];
  
  void EXTI9_5_IRQHandler (){  /*Table vecteur logiciel => 23*/
    
-   Delay(10000);        //evite "les micros rebonds"
+   Delay(100000);        //evite "les micros rebonds"
    
    if( EXTI->PR & (1<<6) ) 
    
@@ -176,6 +189,36 @@ void TIM4_IRQHandler()
 		ledstripe.setLED(LEDs_state[i], LEDs_position[i]);
 	animNextFrame();
 }
+
+
+void ADC1_IRQHandler() {
+
+          if(ADC1->DR < 1365 ){
+             
+            musicSheet = pop_corn ;
+            printfDigit(&DisplayLcd,"1- POP CORN ", SLOW);
+            Delay(20000);
+  
+          }
+             
+          if(ADC1->DR > 1365 && ADC1->DR < 2730)  {
+
+            musicSheet = jacquot ;
+            printfDigit(&DisplayLcd,"2- JACQUOT ", SLOW);
+            Delay(20000);
+          }
+        
+          if(ADC1->DR > 2730){
+            
+            musicSheet = moonlight ;
+            printfDigit(&DisplayLcd,"3- MOONLIGHT ", SLOW);
+            Delay(20000);
+
+        }
+ 
+}
+  
+
 
 /** @addtogroup Template_Project
   * @{
