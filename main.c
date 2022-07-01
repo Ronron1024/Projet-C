@@ -37,6 +37,7 @@ int testButton1(void);
 int testButton2(void);
 int testButton3(void);
 int testButton4(void);
+void diseable_interrupt_ext(void);
 
 int testButton1(){
 	
@@ -75,6 +76,23 @@ int testButton4(){
 }
 
 
+void diseable_interrupt_ext(void){
+  
+  EXTI->IMR &= ~(1<<11);    
+  EXTI->IMR &= ~(1<<12);    
+  EXTI->IMR &= ~(1<<6);    
+  EXTI->IMR &= ~(1<<5);    
+                             
+  button1.status = 0;
+  button2.status = 0;
+  button3.status = 0;
+  button4.status = 0;
+
+}
+
+
+
+
 DISPLAYLCD DisplayLcd;
 
 Buzzer buzzer;
@@ -105,6 +123,7 @@ int main(void)
 	//buzzer.setSheetMusic(pop_corn, 32);
 	
 	ledstripe = InitLedStripe();
+        ledstripe.setAnim(BLINK);
 	//ledstripe.setAnim(K2000);
 	
 	statusLCD(&DisplayLcd,ON);    //ON ou OFF LCD
@@ -168,6 +187,7 @@ int main(void)
 			printDigit(&DisplayLcd, 2, 'E');
 			printDigit(&DisplayLcd, 3, 'M');
 			printDigit(&DisplayLcd, 4, 'O');
+                        
 		}
 		
 		if (ADC1->DR >= 2730)
@@ -182,46 +202,88 @@ int main(void)
 			printDigit(&DisplayLcd, 4, 'Q');
 		}
 	}
+        
+        diseable_interrupt_ext();
 	
 	eraseLCD(&DisplayLcd);
-	Delay(100000);
+	Delay(200000);
 	
 	printDigit(&DisplayLcd, 1, 'D');
 	printDigit(&DisplayLcd, 2, 'E');
 	printDigit(&DisplayLcd, 3, 'M');
 	printDigit(&DisplayLcd, 4, 'O');
-	
+        
+        eraseLCD(&DisplayLcd);
+	Delay(200000);
 	
 	demo(length, musicSheet);
 	
 	while (1)
 	{		
+          
+          
+             if (!game)
+		{
+			if (!life)
+			{
+                          
+                                IntensityLCD(&DisplayLcd,0);  //Between 0 to 15
+                                
+                                eraseLCD(&DisplayLcd);
+
+				printfDigit(&DisplayLcd,"LOSE", NORMAL);
+			}
+			else
+			{
+
+                                eraseLCD(&DisplayLcd);
+                      printDigit(&DisplayLcd, 1, 'W');
+                      printDigit(&DisplayLcd, 2, 'I');
+                      printDigit(&DisplayLcd, 3, 'N');
+				blinkingLCD(&DisplayLcd, FAST);
+			}
+		}
+          
+          
 		while(game && !buzzer.is_playing)
 		{
 			
 			
-			
-			
+		IntensityLCD(&DisplayLcd,0);
+
+                        
+    		
 			if (!has_demo)
+                
 			{
-				
+                          
+                          diseable_interrupt_ext();
+                          
+				eraseLCD(&DisplayLcd);
+                                ;
+				Delay(100000);
 				printDigit(&DisplayLcd, 1, 'G');
 				printDigit(&DisplayLcd, 2, 'O');
 				printDigit(&DisplayLcd, 3, '!');
-				Delay(2000000);
-				eraseLCD(&DisplayLcd);
-				Delay(100000);
-				
-				
+                            
+				Delay(1000000);
+                                eraseLCD(&DisplayLcd);
+                                Delay(1000000);
+						
 				demo(note_to_play, musicSheet);
 				has_demo = 1;
 				continue; // Cannot play during demo
 			}
 			
+                        
+                        enable_interrupt_ext_buttons();
+                        
+                        
 			//if(button1.status == 1 )
 			if( testButton1() == 1 && testButton2() == 0 && testButton3() == 0 && testButton4() == 0)
 			{
 				one_note[0] = musicSheet[cursor];
+                                one_note[0].duration = quaver;
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
@@ -231,8 +293,19 @@ int main(void)
 				}
 				else 
 				{          
-					life--;          
+					life--;
+                                       
+                                        ledstripe.toggleAnim();
+                                        Delay(1000000);
+                                        ledstripe.toggleAnim();
 				}
+                                
+                                
+                                //button2.status = 0;
+                                //button3.status = 0;
+                                //button4.status = 0;
+                                
+                                eraseLCD(&DisplayLcd);
 			}
 			
 			//if(button2.status == 1){
@@ -240,6 +313,7 @@ int main(void)
 			{
 				
 				one_note[0] = musicSheet[cursor];
+                                one_note[0].duration = quaver;
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
@@ -250,15 +324,25 @@ int main(void)
 				else 
 				{
 					life--;
+                                       
+                                        ledstripe.toggleAnim();
+                                        Delay(1000000);
+                                        ledstripe.toggleAnim();
 				}
+                                
+                                //button1.status = 0;
+                                //button3.status = 0;
+                                //button4.status = 0;
+                                
+                                eraseLCD(&DisplayLcd);
 			}
 			
 			//if(button3.status == 1  && Delay(300000) == 0)
 			if( testButton1() == 0 && testButton2() == 0 && testButton3() == 1 && testButton4() == 0 )
 			{
 				
-				button3.status = 0;
 				one_note[0] = musicSheet[cursor];
+                                one_note[0].duration = quaver;
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
@@ -269,15 +353,23 @@ int main(void)
 				else 
 				{
 					life--;
+                                       
+                                        ledstripe.toggleAnim();
+                                        Delay(1000000);
+                                        ledstripe.toggleAnim();
 				}
-				button3.status = 0;
+				//button3.status = 0;
+                                //button2.status = 0;
+                                //button3.status = 0;
+                                //button4.status = 0;
+                                
+                                eraseLCD(&DisplayLcd);
 			}
 			
-			//if(button4.status == 1  && Delay(300000) == 0){
 			if( testButton1() == 0 && testButton2() == 0 && testButton3() == 0 && testButton4() == 1)
 			{
-				button4.status = 0;
 				one_note[0] = musicSheet[cursor];
+                                one_note[0].duration = quaver;
 				buzzer.setSheetMusic(one_note ,1);
 				buzzer.toggleBuzzer();
 				buzzer.is_playing = 1;
@@ -288,8 +380,17 @@ int main(void)
 				else 
 				{
 					life--;
+                                       
+                                        ledstripe.toggleAnim();
+                                        Delay(1000000);
+                                        ledstripe.toggleAnim();
 				}
 				
+                               	//button3.status = 0;
+                                //button2.status = 0;
+                                //button3.status = 0;
+                                //button4.status = 0;
+                                eraseLCD(&DisplayLcd);
 			}
 			
 			// Display health bar
@@ -316,25 +417,14 @@ int main(void)
 			if (cursor == note_to_play)
 			{
 				note_to_play++;
+                                Delay(1000000);
 				cursor = 0;
 				has_demo = 0;
 				break; // Next turn
 			}
 		}
 		
-		if (!game)
-		{
-			if (!life)
-			{
-				printfDigit(&DisplayLcd,"LOSE", NORMAL);
-				blinkingLCD(&DisplayLcd, FAST);
-			}
-			else
-			{
-				printfDigit(&DisplayLcd,"WIN", NORMAL);
-				blinkingLCD(&DisplayLcd, FAST);
-			}
-		}
+
 		
 	} // game while
 } // µC while

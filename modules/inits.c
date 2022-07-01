@@ -104,7 +104,7 @@ void initTIM4()
     TIM4->CR1 &= ~(1 << 4 | 1 << 5 | 1 << 6); // DIR up, CMS 0b00
     
     // Configure start value
-    TIM4->ARR = 499; // + 1 (count from 0) FCK = 2Hz
+    TIM4->ARR = 99; // + 1 (count from 0) FCK = 2Hz
     
     TIM4->CR1 |= 1 << 7; // ARR buffered
 }

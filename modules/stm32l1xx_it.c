@@ -66,41 +66,40 @@ void EXTI15_10_IRQHandler(){ /*Table vecteur logiciel => 40*/
   
   //Delay(10000);        //evite "les micros rebonds"
   
-  if (EXTI->PR & (1<<11)) //Lorqu' il y a interruption 
+  if (EXTI->PR & (1<<11) && Delay(1000) == 0 ) //Lorqu' il y a interruption 
   {
     choice = 1;
-    EXTI->PR |= (1<<11);
     if( button1.status == 1){
       button1.status = 0;
       button1.count += 1;        
     }
     else
       button1.status = 1;
+    
+   EXTI->PR |= (1<<11);
+   
   }
   
-  if (EXTI->PR & (1<<12))
-  {
-    EXTI->PR |= (1<<12);
-    
+  if (EXTI->PR & (1<<12) && Delay(1000) ==  0 )
+  { 
     if( button2.status == 1){
       button2.status = 0;
       button2.count += 1;   
     }
     else
       button2.status = 1;
+    
+    EXTI->PR |= (1<<12);
   }  
 }
 
 void EXTI9_5_IRQHandler (){  /*Table vecteur logiciel => 23*/
 
  
-  if( EXTI->PR & (1<<6) ) 
+  if( EXTI->PR & (1<<6) && Delay(1000) == 0 ) 
     
   {  
-    
-    Delay(10000);        //evite "les micros rebonds"
-    EXTI->PR |= (1<<6);
-        
+            
     button3.status = 1;
     button3.count += 1;
     //if( button4.status == 1){
@@ -109,19 +108,22 @@ void EXTI9_5_IRQHandler (){  /*Table vecteur logiciel => 23*/
     //}
     //else
     //button4.status = 1;
+    
+    Delay(10000);        //evite "les micros rebonds"
+    EXTI->PR |= (1<<6);
 
   }
   
-  if( EXTI->PR & (1<<5) ){  
+  if( EXTI->PR & (1<<5) && Delay(1000) == 0 ){  
     
-
+    button4.status = 1;
+    button4.count += 1;
     
     Delay(10000);        //evite "les micros rebonds"
     EXTI->PR |= (1<<5);
-   
-    button4.status = 1;
-    button4.count += 1;
 
+    
+    
     //if( button3.status == 1){
     // button3.status = 0;
     // button3.count += 1;   
@@ -163,10 +165,16 @@ void TIM2_IRQHandler()
     eraseLCD(&DisplayLcd);
     music_sheet_cursor = 0;
     buzzer.is_playing = 0;
+    
+    button1.status = 0;
+    button2.status = 0;
+    button3.status = 0;
+    button4.status = 0;
+    
+    
   }
   else
     tone(music_sheet[music_sheet_cursor]);
-  
 }
 
 
